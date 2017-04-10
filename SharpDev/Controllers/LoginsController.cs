@@ -33,15 +33,15 @@ namespace SharpDev.Controllers
         /// Возвращает список логинов начинающихся с символов.
         /// http://localhost:44683/v1/Logins/List?start=5
         /// </summary>
-        /// <param name="start"></param>
+        /// <param name="term"></param>
         /// <returns></returns>
         [GET("Get")]
         [System.Web.Mvc.HttpGet]
-        public IHttpActionResult Get(string start)
+        public IHttpActionResult Get(string term)
         {
             try
             {
-                return Ok<IEnumerable<LoginOutEntity>>(loginService.GetByName(start).ToList());
+                return Ok<IEnumerable<LoginOutEntity>>(loginService.GetByName(term).ToList());
             }
             catch (MyException e)
             {

@@ -2,6 +2,7 @@
 <html>
 <head>
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Транзакции</title>
     <meta charset="utf-8" />
@@ -23,7 +24,6 @@
         <h2>All Transactions</h2>
         <ul id="transactions" />
     </div>
-
     <script>
         var uriTrans = 'v1/Transactions';
         var uriLogin = 'v1/Logins';
@@ -40,7 +40,29 @@
             });
             LoginsList($("#slToLogin"));
             Balance();
+
+            $(GetLoginFind());
+            //var flowers = [{ label: "Astra brown", value: "Astra" }, { label: "Rose red", value: "Rose" }, { label: "Pione red", value: "Pione" }];
+            //$('#acInput').autocomplete({
+            //    source: flowers
+            //});
         });
+
+        function GetLoginFind() {
+            var uriGetLoginUri = uriLogin + '/Get';
+            $('#acInput').autocomplete({
+                source: function (request, response) {
+                    var term = request.term;
+                    var results = [];
+                    $.getJSON(uriGetLoginUri + '/' + term, function (data) {
+                        $.each(data, function (key, item) {
+                            results.push({ label: item.Name, value: item.Email });
+                        });
+                        response(results);
+                    });
+                }
+            });
+        }
 
         function Balance() {
             $.getJSON(uriLogin + '/GetBalance')
@@ -164,6 +186,11 @@
             </tr>
         </table>
         <input type="button" value="Перевести" id="btAddTrans" />
+        <p></p>
+        <div class="ui-widget">
+            <label for="acInput">Пользователь </label>
+            <input id="acInput" />
+        </div>
     </form>
 </body>
 </html>
