@@ -4,6 +4,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BusnessEntities;
 using BusnessServices.Exceptions;
@@ -80,6 +81,12 @@ namespace BusnessServices
         {
             if (String.IsNullOrEmpty(email))
                 return "Email is null";
+
+            string pattern = @".+@.+\..+";
+            if (!Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase))
+            {
+                throw new MyException("Email is wrong");
+            }
 
             return string.Empty;
         }
