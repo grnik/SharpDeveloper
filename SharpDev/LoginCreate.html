@@ -1,0 +1,71 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Создать логин</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#frmAddLogin").submit(function() {
+                addLogin();
+                return false;
+            });
+        });
+    </script>
+    <script>
+
+        function addLogin() {
+
+
+            var getLogin = {
+                Email: $("#email").val(),
+                Name: $("#name").val(),
+                Password: $("#password").val()
+            };
+            $.ajax({
+                url: "v1/Logins/Post",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(getLogin),
+                success: function () {
+                    alert("Added!");
+                },
+                error: function (obj, err) {
+                    if (obj != null) {
+                        alert("Error: " + obj.responseText);
+                    } else {
+                        alert("Error: " + err);
+                    }
+                }
+            });
+
+        }
+    </script>
+
+    <form action="/v1/Login/Post" method="POST" id="frmAddLogin">
+        <table>
+            <tr>
+                <td>Поле</td>
+                <td>Значение</td>
+            </tr>
+            <tr>
+                <td>Mail</td>
+                <td><input id="email" class="Login" type="text" name="Email" /></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td><input id="name" class="Login" type="text" name="Name" /></td>
+            </tr>
+            <tr>
+                <td>Password</td>
+                <td><input id="password" class="Login" type="text" name="Password" /></td>
+            </tr>
+        </table>
+        <button id="btAddLogin" type="submit">Создать</button>
+        <p id="login"></p>
+    </form>
+</body>
+</html>
