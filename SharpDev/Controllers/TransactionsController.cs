@@ -14,9 +14,11 @@ using AttributeRouting.Web.Mvc;
 using BusnessEntities;
 using BusnessServices.Exceptions;
 using Ninject;
+using SharpDev.Filters;
 
 namespace SharpDev.Controllers
 {
+    [ApiAuthenticationFilter]
     [AttributeRouting.RoutePrefix("v1/Transactions")]
     public class TransactionsController : BaseController
     {
@@ -36,7 +38,8 @@ namespace SharpDev.Controllers
         {
             try
             {
-                return Ok<IEnumerable<TransactionOutEntity>>(transactionService.GetByLogin(CurrentUser.Email).OrderBy(t => t.Date).ToList());
+
+                return Ok<IEnumerable<TransactionOutEntity>>(transactionService.GetByLogin(CurrentUserEmail).OrderBy(t => t.Date).ToList());
             }
             catch (MyException e)
             {
@@ -59,7 +62,7 @@ namespace SharpDev.Controllers
                 {
                     throw new MyException("You must select the payment receiver");
                 }
-                return Ok(transactionService.Insert(newTransaction, CurrentUser));
+                return Ok(transactionService.Insert(newTransaction, loginService.GetById(CurrentUserId)));
             }
             catch (MyException e)
             {
