@@ -14,6 +14,7 @@ using AttributeRouting.Web.Mvc;
 using BusnessEntities;
 using BusnessServices.Exceptions;
 using Ninject;
+using SharpDev.Filters;
 
 namespace SharpDev.Controllers
 {
@@ -71,11 +72,12 @@ namespace SharpDev.Controllers
             }
         }
 
+        [ApiAuthenticationFilter(true)]
         public IHttpActionResult GetBalance()
         {
             try
             {
-                return Ok(loginService.Balance(CurrentUser));
+                return Ok(loginService.Balance(CurrentUserEmail));
             }
             catch (MyException e)
             {
@@ -87,11 +89,11 @@ namespace SharpDev.Controllers
             }
         }
 
-        [System.Web.Mvc.HttpPost]
-        public HttpResponseMessage Authentication([FromBody]LoginInEntity loginIn)
-        {
-            return Auth.Authentication(Request, loginIn.Email, loginIn.Password, false);
-        }
+        //[System.Web.Mvc.HttpPost]
+        //public HttpResponseMessage Authentication([FromBody]LoginInEntity loginIn)
+        //{
+        //    return Auth.Authentication(Request, loginIn.Email, loginIn.Password, false);
+        //}
 
         [System.Web.Mvc.HttpPost]
         public IHttpActionResult Post([FromBody]LoginInEntity login)

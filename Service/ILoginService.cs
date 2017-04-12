@@ -25,6 +25,7 @@ namespace BusnessServices
 
         #endregion
 
+        decimal Balance(string email);
         decimal Balance(BusnessEntities.LoginEntity login);
 
         bool CheckEnough(LoginEntity login, decimal amoun);

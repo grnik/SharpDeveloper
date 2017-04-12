@@ -12,11 +12,6 @@
         <a href="/LoginCreate.html">Create Login</a>
     </div>
     <div>
-        <input type="text" title="Login" id="txtLogin" />
-        <input type="text" title="Password" id="txtPassword" />
-        <input type="button" value="Authentication" id="btAuthentication" />
-    </div>
-    <div>
         <H4>Ваш баланс <input type="text" readonly="readonly" id="txtBalance" /></H4>
     </div>
     <div>
@@ -31,9 +26,6 @@
         $(document).ready(function () {
             $("#btAddTrans").click(function () {
                 addTransaction();
-            });
-            $("#btAuthentication").click(function () {
-                Authentication();
             });
             $("#btTransactions").click(function () {
                 Transactions();
@@ -149,30 +141,6 @@
             });
         }
 
-        function Authentication() {
-            var getLogin = {
-                Email: $("#txtLogin").val(),
-                Password: $("#txtPassword").val()
-            }
-            $.ajax({
-                url: uriLogin + "/Authentication",
-                type: "POST",
-                contentType: "application/json; charset=utf-8",
-                data: JSON.stringify(getLogin),
-                success: function () {
-                    alert("Authentication");
-                    Balance();
-                },
-                error: function (obj, err) {
-                    if (obj != null) {
-                        alert("Error: " + obj.responseText);
-                    } else {
-                        alert("Error: " + err);
-                    }
-                }
-            });
-        }
-
     </script>
     <form id="frAddTransaction">
         <table>
@@ -186,11 +154,6 @@
             </tr>
         </table>
         <input type="button" value="Перевести" id="btAddTrans" />
-        <p></p>
-        <div class="ui-widget">
-            <label for="acInput">Пользователь </label>
-            <input id="acInput" />
-        </div>
     </form>
 </body>
 </html>

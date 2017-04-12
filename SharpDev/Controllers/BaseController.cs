@@ -6,28 +6,54 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Results;
 using BusnessEntities;
-using SharpDev.Auth;
+using BusnessServices;
 using BusnessServices.Exceptions;
 using Ninject;
+using SharpDev.Filters;
 
 namespace SharpDev.Controllers
 {
     public class BaseController : ApiController
     {
         protected static IKernel AppKernel = new StandardKernel(new NinjectConfig());
+        protected ILoginService loginService;
 
-        public IAuthentication Auth { get; set; }
-        public LoginOutEntity CurrentUser
+        public string CurrentUserEmail
         {
             get
             {
-                return ((UserIndentity)Auth.CurrentUser(Request).Identity).User;
+                if (System.Threading.Thread.CurrentPrincipal != null && System.Threading.Thread.CurrentPrincipal.Identity.IsAuthenticated)
+                {
+                    var basicAuthenticationIdentity = System.Threading.Thread.CurrentPrincipal.Identity as BasicAuthenticationIdentity;
+                    if (basicAuthenticationIdentity != null)
+                    {
+                        var email = basicAuthenticationIdentity.UserName;
+                        return email;
+                    }
+                }
+                return null;
+            }
+        }
+        public Guid CurrentUserId
+        {
+            get
+            {
+                if (System.Threading.Thread.CurrentPrincipal != null && System.Threading.Thread.CurrentPrincipal.Identity.IsAuthenticated)
+                {
+                    var basicAuthenticationIdentity = System.Threading.Thread.CurrentPrincipal.Identity as BasicAuthenticationIdentity;
+                    if (basicAuthenticationIdentity != null)
+                    {
+                        var userId = basicAuthenticationIdentity.UserId;
+                        return userId;
+                    }
+                }
+                return Guid.Empty;
             }
         }
 
         public BaseController()
         {
-            Auth = new CustomAuthentication();
+            loginService = AppKernel.Get<ILoginService>();
         }
 
         #region Exception result

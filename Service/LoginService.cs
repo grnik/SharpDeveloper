@@ -130,7 +130,7 @@ namespace BusnessServices
         {
             return transactionService.GetByLoginFrom(email).Sum(t => t.Amount);
         }
-        private decimal Balance(string email)
+        public decimal Balance(string email)
         {
             return Debit(email) - Credit(email);
         }
