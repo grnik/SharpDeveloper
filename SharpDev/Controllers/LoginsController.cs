@@ -22,12 +22,10 @@ namespace SharpDev.Controllers
     public class LoginsController : BaseController
     {
 
-        private ILoginService loginService;
 
         public LoginsController()
              : base()
         {
-            this.loginService = AppKernel.Get<ILoginService>();
         }
 
         /// <summary>
