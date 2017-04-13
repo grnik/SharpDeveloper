@@ -18,13 +18,13 @@ using SharpDev.Filters;
 
 namespace SharpDev.Controllers
 {
-    //[AttributeRouting.RoutePrefix("v1/Logins/{action}/{id}")]
+    [AttributeRouting.RoutePrefix("v1/Logins")]
     public class LoginsController : BaseController
     {
 
 
         public LoginsController()
-             : base()
+            : base()
         {
         }
 
@@ -94,7 +94,7 @@ namespace SharpDev.Controllers
         //}
 
         [System.Web.Mvc.HttpPost]
-        public IHttpActionResult Post([FromBody]LoginInEntity login)
+        public IHttpActionResult Post([FromBody] LoginInEntity login)
         {
             try
             {
@@ -109,6 +109,17 @@ namespace SharpDev.Controllers
             {
                 return Results(e);
             }
+        }
+
+        [POST("Logout")]
+        [System.Web.Mvc.HttpPost]
+        public HttpResponseMessage Logout()
+        {
+            var host = Request.RequestUri.DnsSafeHost;
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+            response.Headers.Add("WWW-Authenticate", string.Format("Basic realm=\"{0}\"", host));
+
+            return response;
         }
     }
 }

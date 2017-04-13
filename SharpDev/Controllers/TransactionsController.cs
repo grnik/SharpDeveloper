@@ -38,7 +38,6 @@ namespace SharpDev.Controllers
         {
             try
             {
-
                 return Ok<IEnumerable<TransactionOutEntity>>(transactionService.GetByLogin(CurrentUserEmail).OrderBy(t => t.Date).ToList());
             }
             catch (MyException e)
