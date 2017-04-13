@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Транзакции</title>
+    <meta charset="utf-8" />
+</head>
+<body>
+    <div>
+        <a href="/LoginCreate.html">Create Login</a>
+    </div>
+    <div>
+        <H4>Ваш баланс <input type="text" readonly="readonly" id="txtBalance" /></H4>
+    </div>
+    <div>
+        <input type="button" value="Transactions" id="btTransactions" />
+        <h2>All Transactions</h2>
+        <ul id="transactions" />
+    </div>
+    <script>
+        var uriTrans = 'v1/Transactions';
+        var uriLogin = 'v1/Logins';
+
+        $(document).ready(function () {
+            $("#btAddTrans").click(function () {
+                addTransaction();
+            });
+            $("#btTransactions").click(function () {
+                Transactions();
+            });
+            LoginsList($("#slToLogin"));
+            Balance();
+
+            $(GetLoginFind());
+            //var flowers = [{ label: "Astra brown", value: "Astra" }, { label: "Rose red", value: "Rose" }, { label: "Pione red", value: "Pione" }];
+            //$('#acInput').autocomplete({
+            //    source: flowers
+            //});
+        });
+
+        function GetLoginFind() {
+            var uriGetLoginUri = uriLogin + '/Get';
+            $('#acInput').autocomplete({
+                source: function (request, response) {
+                    var term = request.term;
+                    var results = [];
+                    $.getJSON(uriGetLoginUri + '/' + term, function (data) {
+                        $.each(data, function (key, item) {
+                            results.push({ label: item.Name, value: item.Email });
+                        });
+                        response(results);
+                    });
+                }
+            });
+        }
+
+        function Balance() {
+            $.getJSON(uriLogin + '/GetBalance')
+                .done(function (data) {
+                    $("#txtBalance").val(data);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $("#txtBalance").val('Error: ' + err);
+                });
+        }
+
+        function Transactions() {
+            //Delete old data
+            $("#transactions").empty();
+
+            // Send an AJAX request
+            var loginId = 'test@mail.ru';
+            $.getJSON(uriTrans + '/GetAll')
+                .done(function (data) {
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+                        $('<li>', { text: formatItem(item) }).appendTo($('#transactions'));
+                    });
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('<li>', { text: 'Error: ' + err }).appendTo($('#transactions'));
+                });
+        };
+
+        function LoginsList(slElem) {
+            //Delete old data
+            slElem.empty();
+
+            // Send an AJAX request
+            $.getJSON(uriLogin + '/Get')
+                .done(function (data) {
+                    $('<option>', { text: "" }).appendTo(slElem);
+                    $.each(data, function (key, item) {
+                        // Add a list item for the product.
+                        $('<option>', { text: item.Email }).appendTo(slElem);
+                    });
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('<option>', { text: 'Error: ' + err }).appendTo(slElem);
+                });
+        };
+
+        function formatItem(item) {
+            return item.Date + ' ' + item.LoginFromEmail + ' -> ' + item.Amount + ' -> ' + item.LoginToEmail;
+        };
+
+        function addTransaction() {
+            var getTransaction = {
+                ToLogin: $("#slToLogin").val(),
+                Amount: $("#Amount").val()
+            };
+
+            if (getTransaction.ToLogin == "") {
+                alert("Error: You must select the payment receiver");
+                return;
+            }
+
+            if (getTransaction.Amount <= 0) {
+                alert("Enter positive Amount");
+                return;
+            }
+
+            $.ajax({
+                url: uriTrans + "/Post",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(getTransaction),
+                success: function () {
+                    alert("Transfer!");
+                    Balance();
+                },
+                error: function (obj, err) {
+                    if (obj != null) {
+                        alert("Error: " + obj.responseText);
+                    } else {
+                        alert("Error: " + err);
+                    }
+                }
+            });
+        }
+
+    </script>
+    <form id="frAddTransaction">
+        <table>
+            <tr>
+                <td>To</td>
+                <td><select id="slToLogin" size="1"></select></td>
+            </tr>
+            <tr>
+                <td>Amount</td>
+                <td><input name="Amount" id="Amount" />0</td>
+            </tr>
+        </table>
+        <input type="button" value="Перевести" id="btAddTrans" />
+    </form>
+</body>
+</html>
