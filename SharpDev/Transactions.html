@@ -12,6 +12,9 @@
         <a href="/LoginCreate.html">Create Login</a>
     </div>
     <div>
+        <input type="button" value="Logout" id="btLogout" />
+    </div>
+    <div>
         <H4>Ваш баланс <input type="text" readonly="readonly" id="txtBalance" /></H4>
     </div>
     <div>
@@ -34,14 +37,14 @@
             Balance();
 
             $(GetLoginFind());
-            //var flowers = [{ label: "Astra brown", value: "Astra" }, { label: "Rose red", value: "Rose" }, { label: "Pione red", value: "Pione" }];
-            //$('#acInput').autocomplete({
-            //    source: flowers
-            //});
+
+            $("#btLogout").click(function () {
+                Logout();
+            });
         });
 
         function GetLoginFind() {
-            var uriGetLoginUri = uriLogin + '/Get';
+            var uriGetLoginUri = uriLogin + '/Logout';
             $('#acInput').autocomplete({
                 source: function (request, response) {
                     var term = request.term;
@@ -52,6 +55,29 @@
                         });
                         response(results);
                     });
+                }
+            });
+        }
+
+        function Logout() {
+            $.ajax({
+                url: uriLogin + "/Logout",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                    alert("Logout!");
+                    $(location).prop('href', "Index.html");
+                },
+                error: function (obj, err) {
+                    if (obj != null) {
+                        if (obj.status = 401) {
+                            $(location).prop('href', "Index.html");
+                        } else {
+                            alert("Error: " + obj.responseText);
+                        }
+                    } else {
+                        alert("Error: " + err);
+                    }
                 }
             });
         }
